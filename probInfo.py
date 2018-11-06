@@ -73,6 +73,39 @@ def system(uk, xk, T):
     return xkp1
 
 
+def system_design(del_u_k, del_x_k, T, x0_23):
+
+    if ns == 4:
+
+        #E0_k = x0_k[0]
+        #N0_k = x0_k[1]
+        V0_k = x0_23[0]
+        Chi0_k = x0_23[1]
+
+        del_E_k = del_x_k[0]
+        del_N_k = del_x_k[1]
+        del_V_k = del_x_k[2]
+        del_Chi_k = del_x_k[3]
+
+        del_u1_k = del_u_k[0]
+        del_u2_k = del_u_k[1]
+
+        del_E_kp1 = del_E_k + T * (np.sin(Chi0_k) * del_V_k + V0_k * np.cos(Chi0_k) * del_Chi_k)  # Edot
+        del_N_kp1 = del_N_k + T * (np.cos(Chi0_k) * del_V_k - V0_k * np.sin(Chi0_k) * del_Chi_k)  # Ndot
+        del_V_kp1 = del_V_k + T * del_u1_k
+        del_Chi_kp1 = del_Chi_k + T * del_u2_k
+
+        x_del_kp1 = np.array([del_E_kp1, del_N_kp1, del_V_kp1, del_Chi_kp1])
+
+        xkp1 = x_del_kp1
+
+    else:
+        xkp1 = []
+
+    return xkp1
+
+
+
 def runningCosts(u, x, t0, path, obstacle, posIdx = None, V_cmd = None):
 
     if ns == 6:
@@ -329,7 +362,7 @@ def terminalCons(u, x, t0, path, obstacle, posIdx=None):
     #     return np.array([np.NaN]), np.array([np.NaN])
 
 
-def computeOpenloopSolution(u, N, T, t0, x0):
+def computeOpenloopSolution(u, N, T, t0, x0, x00_23):
     x = np.zeros([N, np.size(x0)])
     x[0] = x0
 
@@ -337,6 +370,8 @@ def computeOpenloopSolution(u, N, T, t0, x0):
         u0 = u[k]
         u1 = u[k+N]
         uk = np.array([u0,u1])
-        x[k+1] = system(uk, x[k], T)
+
+        del_u_k = uk  # true for vdot and chidot
+        x[k+1] = system_design(del_u_k, x[k], T, x00_23)   # system_design(del_u_k, del_x_k, T, x0_k)
     return x
 

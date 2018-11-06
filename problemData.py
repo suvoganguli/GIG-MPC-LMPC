@@ -56,9 +56,9 @@ V0 = 10*mph2fps
 # mpciterations = problemMaxIterData(N, ns, no, V0, sf_T)
 mpciterations = 100
 
-decelType = 'Slow'  # Slow or Fast
+decelType = 'Fast'  # Slow or Fast
 
-lb_reachedNearGoal = 20 #max([V0*N*T, 40]) # ft
+lb_reachedNearGoal = 20 # 20 # ft
 lb_reachedGoal = 1 # ft
 zeroDistanceChange = 1 # ft
 
@@ -212,7 +212,7 @@ elif no == 1:
 
     # large object
     obstacleLength = np.array([8.0]) * scaleFactorN # ft
-    obstacleWidth = np.array([20.0]) * scaleFactorE # ft
+    obstacleWidth = np.array([8.0]) * scaleFactorE # ft
     obstacleSafeLength = obstacleLength + 2*obstacleLengthMargin
     obstacleSafeWidth = obstacleWidth + 2*obstacleWidthMargin
 

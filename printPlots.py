@@ -13,10 +13,10 @@ from utils import *
 # *X, *Y = E [ft], N [ft], theta [rad] (theta is w.r.t +E axis)
 
 
-def nmpcPlotSol(u_new, path, x0, obstacle, pathType, mpciter):
+def nmpcPlotSol(u_new, path, x0, x00_23, obstacle, pathType, mpciter):
 
     u_mpciter = u_new.flatten(1)
-    x_mpciter = probInfo.computeOpenloopSolution(u_mpciter, pdata.N, pdata.T, pdata.t0, x0)
+    x_mpciter = probInfo.computeOpenloopSolution(u_mpciter, pdata.N, pdata.T, pdata.t0, x0, x00_23)
     East = x_mpciter[:,0]
     North = x_mpciter[:,1]
 

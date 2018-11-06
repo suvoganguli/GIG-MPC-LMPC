@@ -8,6 +8,7 @@ import time, datetime
 import shutil, distutils.dir_util
 import os, os.path
 import globalVars
+import matplotlib.pyplot as plt
 
 # -------------------------------------------------------------------
 # Main.py lets the user run different test cases for Model
@@ -44,6 +45,7 @@ u = np.zeros([mpciterations, nu])
 x0[3] = np.pi/2 - path.pathData.Theta[0]  # align vehicle heading with road heading
 tmeasure = t0
 xmeasure = x0
+x00_23 = x0[2:4]  # initial state to be used in lin model
 u_new = np.zeros([1,nu])
 mpciter = 0
 
@@ -125,13 +127,13 @@ while mpciter < mpciterations:
         print('No obstacle detected at mpciter = ' + str(mpciter))
 
     # solve optimal control problem
-    u_new, info = solveOptimalControlProblem(N, t0, x0, u0, T, ncons, nu, path,
+    u_new, info = solveOptimalControlProblem(N, t0, x0, x00_23, u0, T, ncons, nu, path,
                                              obstacle, posIdx, ncons_option, V_cmd,
                                              lb_VTerm, lb_VdotVal, delChi_max, obstacleID, fHandleCost)
     tElapsed[mpciter] = (time.time() - tStart)
 
     # mpc  future path plot
-    latAccel[mpciter], VTerminal[mpciter], delChi[mpciter] = printPlots.nmpcPlotSol(u_new, path, x0,
+    latAccel[mpciter], VTerminal[mpciter], delChi[mpciter] = printPlots.nmpcPlotSol(u_new, path, x0, x00_23,
                                                                                     obstacle, pathType, mpciter)
 
     # solution information
@@ -160,7 +162,7 @@ while mpciter < mpciterations:
     # reset global variable to write cost breakdown in nlp.py
     globalVars.writeToFileCost = True
 
-    x_mpciter = probInfo.computeOpenloopSolution(u0.flatten(1), N, T, t0, x0)
+    x_mpciter = probInfo.computeOpenloopSolution(u0.flatten(1), N, T, t0, x0, x00_23)
     current_point = x_mpciter[0, 0:2]
     terminal_point = x_mpciter[-1, 0:2]
 

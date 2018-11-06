@@ -5,7 +5,7 @@ import globalVars
 
 class nlpProb(object):
 
-    def __init__(self, N, T, t0, x0, ncons, nu, path, obstacle, posIdx,
+    def __init__(self, N, T, t0, x0, x00_23, ncons, nu, path, obstacle, posIdx,
                  ns_option, V_cmd, lb_VTerm, lb_VdotVal, delChi_max, obstacleID, fHandleCost = None):
         try:
             self.N = N
@@ -27,6 +27,7 @@ class nlpProb(object):
             self.obstacleNumber = np.array([], dtype=int)
             self.delChi_max = delChi_max
             self.obstacleID = obstacleID
+            self.x00_23 = x00_23
 
             useOnlyObstaclesInView = True
 
@@ -77,8 +78,9 @@ class nlpProb(object):
         posIdx = self.posIdx
         V_cmd = self.V_cmd
         fHandleCost = self.fHandleCost
+        x00_23 = self.x00_23
 
-        x = prob.computeOpenloopSolution(u, N, T, t0, x0)
+        x = prob.computeOpenloopSolution(u, N, T, t0, x0, x00_23)
         costvec = np.zeros([3*N+2, 1])
 
         for k in range(N):
@@ -140,8 +142,9 @@ class nlpProb(object):
             obstacle = self.obstacle
             posIdx = self.posIdx
             ns_option = self.ns_option
+            x00_23 = self.x00_23
 
-            x = prob.computeOpenloopSolution(u, N, T, t0, x0)
+            x = prob.computeOpenloopSolution(u, N, T, t0, x0, x00_23)
 
             consR1 = np.array([], dtype=float)
 
@@ -280,6 +283,7 @@ class nlpProb(object):
             fHandleCost = self.fHandleCost
             delChi_max = self.delChi_max
             obstacleID = self.obstacleID
+            x00_23 = self.x00_23
 
             LARGE_NO = 1e12
 
@@ -363,7 +367,7 @@ class nlpProb(object):
             nlp = ipopt.problem(
                 n=nu*N,
                 m=len(cl),
-                problem_obj=nlpProb(N, T, t0, x0, ncons, nu, path,
+                problem_obj=nlpProb(N, T, t0, x0, x00_23, ncons, nu, path,
                                     obstacle, posIdx, ns_option, V_cmd,
                                     lb_VTerm, lb_VdotVal, delChi_max, obstacleID, fHandleCost),
                 lb=lb,

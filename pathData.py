@@ -1,5 +1,4 @@
 import numpy as np
-from laplacianPlanner import *
 from obstacleData import *
 from utils import *
 
